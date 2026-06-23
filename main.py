@@ -23,3 +23,7 @@ def get_classement():
 @app.route("/points/<int:points>")
 def get_points(points):
     return jsonify({'message': f"Points de l'utilisateur: {points}"})
+
+@app.route("/commentaire/<string:commentaire>")
+def get_commentaire(commentaire):
+    return jsonify({'message': f"Commentaire: {commentaire}"})
