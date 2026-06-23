@@ -10,15 +10,15 @@ def init_db():
 
     cur = conn.cursor()
 
-    cur.execute("INSERT INTO Utilisateur (nom, promo, ) VALUES (?, ?)",
+    cur.execute("INSERT INTO Utilisateur (nom, promo) VALUES (?, ?)",
                 ('Mila', 'IMAC1')
                 )
 
-    cur.execute("INSERT INTO Utilisateur (nom, promo, ) VALUES (?, ?)",
+    cur.execute("INSERT INTO Utilisateur (nom, promo) VALUES (?, ?)",
                 ('Yasmine', 'IMAC1')
                 )
 
-    cur.execute("INSERT INTO Utilisateur (nom, promo, ) VALUES (?, ?)",
+    cur.execute("INSERT INTO Utilisateur (nom, promo) VALUES (?, ?)",
                 ('Corentin', 'IMAC1')
                 )
 

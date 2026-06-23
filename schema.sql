@@ -1,31 +1,31 @@
-CREATE TABLE Utilisateur (
-  id_utilisateur INT PRIMARY KEY AUTO_INCREMENT, 
+CREATE TABLE IF NOT EXISTS Utilisateur (
+  id_utilisateur INTEGER PRIMARY KEY AUTOINCREMENT, 
   nom VARCHAR(50),
   mdp VARCHAR(50),
   promo VARCHAR(5),
-  points INT DEFAULT 0,
+  points INTEGER DEFAULT 0,
   actif BOOLEAN DEFAULT 0
-)
+);
 
-CREATE TABLE Post (
-  id_post INT PRIMARY KEY AUTO_INCREMENT, 
+CREATE TABLE IF NOT EXISTS Post (
+  id_post INTEGER PRIMARY KEY AUTOINCREMENT, 
   images BLOB,
   description VARCHAR(50),
-  date_post DATE DEFAULT CURRENT_DATE()
-)
+  date_post DATE
+);
 
-CREATE TABLE Vote (
-  id_vote INT PRIMARY KEY AUTO_INCREMENT, 
-  id_post REFERENCES Post(id),
-  id_utilisateur REFERENCES Utilisateur(id),
-  date_vote DATE DEFAULT CURRENT_DATE(),
-  id_pour_qui_a_vote REFERENCES Utilisateur(id)
-)
+CREATE TABLE IF NOT EXISTS Vote (
+  id_vote INTEGER PRIMARY KEY AUTOINCREMENT, 
+  id_post INTEGER REFERENCES Post(id_post),
+  id_utilisateur INTEGER REFERENCES Utilisateur(id_utilisateur),
+  date_vote DATE,
+  id_pour_qui_a_vote INTEGER REFERENCES Utilisateur(id_utilisateur)
+);
 
-CREATE TABLE Commentaire(
-  id_com INT PRIMARY KEY AUTO_INCREMENT, 
-  id_utilisateur REFERENCES Utilisateur(id),
-  id_post REFERENCES Post(id),
-  date_commentaire DATE DEFAULT CURRENT_DATE(),
+CREATE TABLE IF NOT EXISTS Commentaire(
+  id_com INTEGER PRIMARY KEY AUTOINCREMENT, 
+  id_utilisateur INTEGER REFERENCES Utilisateur(id_utilisateur),
+  id_post INTEGER REFERENCES Post(id_post),
+  date_commentaire DATE,
   commentaire VARCHAR(255)
-)
+);
