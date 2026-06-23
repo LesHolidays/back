@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS Post (
   date_post DATE
 );
 
-<<<<<<< Updated upstream
+
 CREATE TABLE IF NOT EXISTS Vote (
   id_vote INTEGER PRIMARY KEY AUTOINCREMENT, 
   id_post INTEGER REFERENCES Post(id_post),
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS Vote (
   date_vote DATE,
   id_pour_qui_a_vote INTEGER REFERENCES Utilisateur(id_utilisateur)
 );
-=======
+
 CREATE TABLE Vote (
   id_vote INT PRIMARY KEY AUTO_INCREMENT, 
   id_post references ,
@@ -30,7 +30,7 @@ CREATE TABLE Vote (
   date_vote DATE ,
   id_pour_qui_a_vote references
 )
->>>>>>> Stashed changes
+
 
 CREATE TABLE IF NOT EXISTS Commentaire(
   id_com INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -38,24 +38,8 @@ CREATE TABLE IF NOT EXISTS Commentaire(
   id_post INTEGER REFERENCES Post(id_post),
   date_commentaire DATE,
   commentaire VARCHAR(255)
-<<<<<<< Updated upstream
+
 );
-
-SELECT nom FROM utilisateur
-INSERT INTO utilisateur (compte) VALUES(?)
-
-SELECT id_post FROM post
-INSERT INTO post (vote) VALUES(?)
-INSERT INTO post (commentaire) VALUES(?)
-SELECT points FROM utilisateur
-DELETE FROM post
-UPDATE description FROM post SET description=(?)
-
-INSERT INTO post(nouveau) VALUES(?)
-
-SELECT points FROM utilisateur 
-=======
- )
 
 SELECT nom FROM utilisateur 
 INSERT INTO utilisateur (compte) VALUES (?)
@@ -70,5 +54,4 @@ UPDATE post SET description=?
 INSERT INTO post (nouveau) VALUES (?)
 
 SELECT points FROM utilisateur
->>>>>>> Stashed changes
 ORDER BY points DESC
