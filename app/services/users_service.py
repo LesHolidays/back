@@ -1,9 +1,9 @@
 from flask_jwt_extended import create_access_token
 import bcrypt
-from ..models.users import activate_user, get_user_by_id, get_users
+from ..models import users_model
 
 def register_user(user_id, password):
-    user_already_activated = get_user_by_id(user_id)["activated"]
+    user_already_activated = users_model.get_user_by_id(user_id)["activated"]
 
     if(user_already_activated):
         raise Exception("Compte déjà créé")
@@ -13,13 +13,13 @@ def register_user(user_id, password):
     password_hashe = bcrypt.hashpw(password_bytes, salt)
 
     try:
-        activate_user(user_id, password_hashe)
+        users_model.activate_user(user_id, password_hashe)
         return create_access_token(identity=user_id)
     except:
         raise
 
 def login_user(user_id, input_password):
-    hashed_password = get_user_by_id(user_id)["password"].encode('utf-8')
+    hashed_password = users_model.get_user_by_id(user_id)["password"].encode('utf-8')
     input_password_bytes = input_password.encode('utf-8')
     if(bcrypt.checkpw(input_password_bytes, hashed_password)):
         return create_access_token(identity=user_id)
@@ -27,4 +27,4 @@ def login_user(user_id, input_password):
         raise Exception("Mauvais mot de passe")
 
 def get_all_users():
-    return get_users()
+    return users_model.get_users()

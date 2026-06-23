@@ -1,5 +1,5 @@
 import base64
-from ..models.posts import get_all_posts, create_post
+from ..models import posts_model
 from PIL import Image
 import io
 
@@ -10,10 +10,10 @@ def create_post(user_id, image, description):
     memoire_tampon = io.BytesIO()
     img.save(memoire_tampon, format=img_format)
     blob = memoire_tampon.getvalue()
-    create_post(user_id, blob, description)
+    posts_model.create_post(user_id, blob, description)
 
 def get_posts():
-    rows = get_all_posts()
+    rows = posts_model.get_all_posts()
     posts = []
     for row in rows:
         post = dict(row)

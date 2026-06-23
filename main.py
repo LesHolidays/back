@@ -1,12 +1,9 @@
-import base64
 from datetime import timedelta
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from app.database import init_db
-from app.services.posts import create_post, get_posts
-from app.services.files import allowed_file
-from app.services.users import register_user, get_all_users, login_user
+from app.services import posts_service, files_service, users_service
 
 from flask_jwt_extended import get_jwt_identity, jwt_required, JWTManager
 
@@ -26,17 +23,17 @@ def index():
 
 @app.route("/register", methods=["POST"])
 def register():
-    access_token = register_user(request.form.get("user_id"), request.form.get("password"))
+    access_token = users_service.register_user(request.form.get("user_id"), request.form.get("password"))
     return jsonify(access_token=access_token)
 
 @app.route("/login", methods=["POST"])
 def login():
-    access_token = login_user(request.form.get("user_id"), request.form.get("password"))
+    access_token = users_service.login_user(request.form.get("user_id"), request.form.get("password"))
     return jsonify(access_token=access_token)
 
 @app.route("/users")
 def get_users():
-    users = get_all_users()
+    users = users_service.get_all_users()
     return jsonify(users)
 
 @app.route("/utilisateur/<int:utilisateur_id>")
@@ -71,11 +68,11 @@ def posts():
         if file.filename == '':
             return 'Aucun fichier sélectionné', 400
         
-        if file and allowed_file(file.filename):
+        if file and files_service.allowed_file(file.filename):
             user_id = get_jwt_identity()
-            create_post(user_id, file, request.form.get("description"))
+            posts_service.create_post(user_id, file, request.form.get("description"))
 
         return jsonify({"success": True}), 201
     else:
-        liste_posts = get_posts()
+        liste_posts = posts_service.get_posts()
         return jsonify(liste_posts), 200
