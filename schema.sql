@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS Utilisateur (
   id_utilisateur INTEGER PRIMARY KEY AUTOINCREMENT, 
   nom VARCHAR(50),
+  prenom VARCHAR(50),
   mdp VARCHAR(50),
   promo VARCHAR(5),
   points INTEGER DEFAULT 0,
@@ -41,7 +42,7 @@ CREATE TABLE IF NOT EXISTS Commentaire(
 
 );
 
-SELECT nom FROM utilisateur 
+SELECT nom, prenom FROM utilisateur 
 INSERT INTO utilisateur (compte) VALUES (?)
 
 SELECT id_post FROM post
