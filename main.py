@@ -1,17 +1,17 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_cors import CORS
-from app.database import init_db
 
 app = Flask(__name__)
 CORS(app)
-
-init_db()
 
 @app.route("/")
 def index():
     return jsonify('Hello world')
 
-# @app.route("/posts", methods=["GET", "POST"])
-# def posts():
-#     if(request.method == "GET"):
-        
+@app.route("/utilisateurs")
+def get_utilisateurs():
+    return jsonify({'message': 'Liste des utilisateurs'})
+
+@app.route("/utilisateur/<int:utilisateur_id>")
+def get_utilisateur_by_id(utilisateur_id):
+    return jsonify({"message": f"Utilisateur avec l'ID {utilisateur_id}"})
