@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from app.database import init_db
-from app.models.posts import create_post
+from app.services.posts import create_post
 from app.services.files import allowed_file
 import os
 from PIL import Image
@@ -44,7 +44,6 @@ def get_commentaire(commentaire):
 def post_vote():
     return jsonify({'Vote créé'})
 
-
 # @app.route("/login", methods=["POST"])
 # def login():
 #     username = request.json.get("username", None)
@@ -68,4 +67,4 @@ def posts():
     if file and allowed_file(file.filename):
         create_post(file, request.form.get("description"))
 
-    return 'Type de fichier non autorisé', 400
+    return 200
