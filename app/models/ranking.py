@@ -1,13 +1,13 @@
 from ..database import get_db
 
-def create_classement():
+def get_ranking():
     conn = get_db()
     cur = conn.cursor()
     
     try:
-        cur.execute("SELECT points FROM utilisateur ORDER BY points DESC")
-        classement = cur.fetchall()
-        return classement
+        cur.execute("SELECT points FROM User ORDER BY points DESC")
+        ranking = cur.fetchall()
+        return ranking
     except Exception: 
         raise
     finally:

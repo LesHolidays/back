@@ -1,11 +1,11 @@
 from ..database import get_db
 
-def vote(vote, id_post, id_utilisateur, id_pour_qui_a_vote):
+def vote(vote, post_id, user_id, voted_user_id):
     conn = get_db()
     cur = conn.cursor()
 
     try:
-        cur.execute("INSERT INTO post (vote, id_post, id_utilisateur, id_pour_qui_a_vote) VALUES (?, ?, ?, ?)", (vote, id_post, id_utilisateur, id_pour_qui_a_vote))
+        cur.execute("INSERT INTO Post (vote, post_id, user_id, voted_user_id) VALUES (?, ?, ?, ?)", (vote, post_id, user_id, voted_user_id))
         conn.commit()
     except Exception:
         raise

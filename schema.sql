@@ -1,34 +1,35 @@
-CREATE TABLE IF NOT EXISTS Utilisateur (
-  id_utilisateur INTEGER PRIMARY KEY AUTOINCREMENT, 
-  nom VARCHAR(50),
-  prenom VARCHAR(50),
-  mdp VARCHAR(50),
-  promo VARCHAR(5),
+CREATE TABLE IF NOT EXISTS User (
+  user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+  last_name VARCHAR(50),
+  first_name VARCHAR(50),
+  password VARCHAR(100),
+  year VARCHAR(5),
   points INTEGER DEFAULT 0,
-  actif BOOLEAN DEFAULT 0
+  activated BOOLEAN DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS Post (
-  id_post INTEGER PRIMARY KEY AUTOINCREMENT, 
+  post_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+  user_id INTEGER REFERENCES User(user_id),
   image BLOB,
   description VARCHAR(50),
-  date_post DATE
+  creation_date DATE
 );
 
 CREATE TABLE IF NOT EXISTS Vote (
-  id_vote INTEGER PRIMARY KEY AUTOINCREMENT, 
-  id_post INTEGER REFERENCES Post(id_post),
-  id_utilisateur INTEGER REFERENCES Utilisateur(id_utilisateur),
-  date_vote DATE,
-  id_pour_qui_a_vote INTEGER REFERENCES Utilisateur(id_utilisateur)
+  vote_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+  post_id INTEGER REFERENCES Post(post_id),
+  user_id INTEGER REFERENCES User(user_id),
+  vote_date DATE,
+  voted_user_id INTEGER REFERENCES User(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS Commentaire(
-  id_com INTEGER PRIMARY KEY AUTOINCREMENT, 
-  id_utilisateur INTEGER REFERENCES Utilisateur(id_utilisateur),
-  id_post INTEGER REFERENCES Post(id_post),
-  date_commentaire DATE,
-  commentaire VARCHAR(255)
+  commentary_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+  user_id INTEGER REFERENCES User(user_id),
+  post_id INTEGER REFERENCES Post(post_id),
+  creation_date DATE,
+  message VARCHAR(255)
 
 );
 
@@ -36,7 +37,7 @@ CREATE TABLE IF NOT EXISTS Commentaire(
 
 -- INSERT INTO utilisateur (compte) VALUES (?)
 
--- SELECT id_post FROM post
+-- SELECT post_id FROM post
 -- INSERT INTO post (vote) VALUES (?)
 -- INSERT INTO post(commentaire) VALUES (?)
 -- SELECT points FROM utilisateur
