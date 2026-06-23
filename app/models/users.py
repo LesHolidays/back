@@ -5,7 +5,7 @@ def get_users():
     cur = conn.cursor()
 
     try:
-        cur.execute("SELECT * FROM User")
+        cur.execute("SELECT user_id, last_name, first_name, activated FROM User")
         users = cur.fetchall()
         return users
     except Exception: 

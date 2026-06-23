@@ -1,15 +1,21 @@
+import base64
+from datetime import timedelta
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from app.database import init_db
-from app.services.posts import create_post
+from app.services.posts import create_post, get_posts
 from app.services.files import allowed_file
 from app.services.users import register_user, get_all_users, login_user
 
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
+from flask_jwt_extended import get_jwt_identity, jwt_required, JWTManager
 
 app = Flask(__name__)
 CORS(app)
+
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=65)
 app.config["JWT_SECRET_KEY"] = "super-secret"
+
 jwt = JWTManager(app)
 
 init_db()
@@ -56,16 +62,20 @@ def vote():
 @app.route("/posts", methods=["GET", "POST"])
 @jwt_required()
 def posts():
-    if 'file' not in request.files:
-        return "Pas d'image envoyée", 400
-    
-    file = request.files['file']
-    
-    if file.filename == '':
-        return 'Aucun fichier sélectionné', 400
-    
-    if file and allowed_file(file.filename):
-        user_id = get_jwt_identity()
-        create_post(user_id, file, request.form.get("description"))
+    if(request.method == "POST"):
+        if 'image' not in request.files:
+            return "Pas d'image envoyée", 400
+        
+        file = request.files['image']
+        
+        if file.filename == '':
+            return 'Aucun fichier sélectionné', 400
+        
+        if file and allowed_file(file.filename):
+            user_id = get_jwt_identity()
+            create_post(user_id, file, request.form.get("description"))
 
-    return jsonify({"success": True}), 201
+        return jsonify({"success": True}), 201
+    else:
+        liste_posts = get_posts()
+        return jsonify(liste_posts), 200
