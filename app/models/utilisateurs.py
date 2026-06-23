@@ -17,6 +17,7 @@ def get_utilisateurs():
 def get_utilisateur_by_id(utilisateur_id):
     conn = get_db()
     cur = conn.cursor()
+    
     try:
         cur.execute("SELECT * FROM Utilisateur WHERE id = ?", (utilisateur_id,))
         utilisateur = cur.fetchone()
