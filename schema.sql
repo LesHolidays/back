@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS Post (
   date_post DATE
 );
 
-
 CREATE TABLE IF NOT EXISTS Vote (
   id_vote INTEGER PRIMARY KEY AUTOINCREMENT, 
   id_post INTEGER REFERENCES Post(id_post),
@@ -23,15 +22,6 @@ CREATE TABLE IF NOT EXISTS Vote (
   date_vote DATE,
   id_pour_qui_a_vote INTEGER REFERENCES Utilisateur(id_utilisateur)
 );
-
-CREATE TABLE Vote (
-  id_vote INT PRIMARY KEY AUTO_INCREMENT, 
-  id_post references ,
-  id_utilisateur references ,
-  date_vote DATE ,
-  id_pour_qui_a_vote references
-)
-
 
 CREATE TABLE IF NOT EXISTS Commentaire(
   id_com INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -42,17 +32,17 @@ CREATE TABLE IF NOT EXISTS Commentaire(
 
 );
 
-SELECT nom, prenom FROM utilisateur ORDER BY nom ASC
+-- SELECT nom, prenom FROM utilisateur ORDER BY nom ASC
 
-INSERT INTO utilisateur (compte) VALUES (?)
+-- INSERT INTO utilisateur (compte) VALUES (?)
 
-SELECT id_post FROM post
-INSERT INTO post (vote) VALUES (?)
-INSERT INTO post(commentaire) VALUES (?)
-SELECT points FROM utilisateur
-DELETE FROM post
-UPDATE post SET description=?
+-- SELECT id_post FROM post
+-- INSERT INTO post (vote) VALUES (?)
+-- INSERT INTO post(commentaire) VALUES (?)
+-- SELECT points FROM utilisateur
+-- DELETE FROM post
+-- UPDATE post SET description=?
 
-INSERT INTO post (nouveau) VALUES (?)
+-- INSERT INTO post (nouveau) VALUES (?)
 
-SELECT points FROM utilisateur ORDER BY points DESC
+-- SELECT points FROM utilisateur ORDER BY points DESC
