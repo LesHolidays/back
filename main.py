@@ -3,7 +3,7 @@ from flask_cors import CORS
 from app.database import init_db
 from app.services.posts import create_post
 from app.services.files import allowed_file
-from app.services.users import register_user, get_all_users
+from app.services.users import register_user, get_all_users, login_user
 
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
 
@@ -25,18 +25,12 @@ def register():
 
 @app.route("/login", methods=["POST"])
 def login():
-    username = request.json.get("username", None)
-    password = request.json.get("password", None)
-    if username != "test" or password != "test":
-        return jsonify({"msg": "Mauvais mot de passe"}), 401
-
-    access_token = create_access_token(identity=username)
+    access_token = login_user(request.form.get("user_id"), request.form.get("password"))
     return jsonify(access_token=access_token)
 
 @app.route("/users")
 def get_users():
     users = get_all_users()
-    print(users)
     return jsonify(users)
 
 @app.route("/utilisateur/<int:utilisateur_id>")
@@ -72,7 +66,6 @@ def posts():
     
     if file and allowed_file(file.filename):
         user_id = get_jwt_identity()
-        print(user_id)
         create_post(user_id, file, request.form.get("description"))
 
     return jsonify({"success": True}), 201

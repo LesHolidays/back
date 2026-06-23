@@ -19,9 +19,9 @@ def get_user_by_id(user_id):
     cur = conn.cursor()
     
     try:
-        cur.execute("SELECT * FROM User WHERE id = ?", (user_id,))
-        utilisateur = cur.fetchone()
-        return utilisateur
+        cur.execute("SELECT * FROM User WHERE user_id=?", (user_id,))
+        user = cur.fetchone()
+        return user
     except Exception:
         raise
     finally:
@@ -33,7 +33,6 @@ def activate_user(user_id, password):
     cur = conn.cursor()
     
     try:
-        print("test")
         cur.execute("UPDATE User SET password=?, activated=1 WHERE user_id=?", (password, user_id))
         conn.commit()
     except Exception:
