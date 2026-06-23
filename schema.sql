@@ -29,3 +29,18 @@ CREATE TABLE IF NOT EXISTS Commentaire(
   date_commentaire DATE,
   commentaire VARCHAR(255)
 );
+
+SELECT nom FROM utilisateur
+INSERT INTO utilisateur (compte) VALUES(?)
+
+SELECT id_post FROM post
+INSERT INTO post (vote) VALUES(?)
+INSERT INTO post (commentaire) VALUES(?)
+SELECT points FROM utilisateur
+DELETE FROM post
+UPDATE description FROM post SET description=(?)
+
+INSERT INTO post(nouveau) VALUES(?)
+
+SELECT points FROM utilisateur 
+ORDER BY points DESC
