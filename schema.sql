@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS Utilisateur (
 
 CREATE TABLE IF NOT EXISTS Post (
   id_post INTEGER PRIMARY KEY AUTOINCREMENT, 
-  images BLOB,
+  image BLOB,
   description VARCHAR(50),
   date_post DATE
 );
