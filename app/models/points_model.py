@@ -12,3 +12,17 @@ def add_points(x, user_id):
     finally:
         cur.close()
         conn.close()
+
+def get_ranking():
+    conn = get_db()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("SELECT user_id, first_name, last_name, points FROM User ORDER BY points DESC")
+        ranking = cur.fetchall()
+        return ranking
+    except Exception: 
+        raise
+    finally:
+        cur.close()
+        conn.close()

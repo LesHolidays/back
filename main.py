@@ -3,7 +3,7 @@ from datetime import timedelta
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from app.database import init_db
-from app.services import posts_service, files_service, users_service, commentary_service, vote_service
+from app.services import posts_service, files_service, users_service, commentary_service, vote_service, points_service
 
 from flask_jwt_extended import get_jwt_identity, jwt_required, JWTManager
 
@@ -40,10 +40,6 @@ def get_users():
 @app.route("/users/<int:users_id>")
 def get_user_by_id(users_id):
     return jsonify({f"Utilisateur avec l'ID {users_id}"})
-
-@app.route("/ranking")
-def get_ranking():
-    return jsonify({'message': 'Classement des utilisateurs'})
 
 @app.route("/points")
 def get_points(points):
@@ -109,3 +105,8 @@ def update_description(post_id):
     description = request.json.get("description")
     posts_service.update_description(post_id, description)
     return jsonify({"success": True}), 200
+
+@app.route("/ranking")
+def get_ranking():
+    ranking = points_service.get_ranking()
+    return jsonify(ranking)
