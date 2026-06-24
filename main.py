@@ -91,3 +91,9 @@ def delete_vote(vote_id):
 def delete_commentary(commentary_id):
     commentary_service.delete_commentary(commentary_id)
     return jsonify({"success": True}), 200
+
+@app.route("/commentary/<int:commentary_id>", methods=["PUT"])
+def update_commentary(commentary_id):
+    message = request.json.get("message")
+    commentary_service.update_commentary(commentary_id, message)
+    return jsonify({"success": True}), 200
