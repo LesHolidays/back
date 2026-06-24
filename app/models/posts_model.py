@@ -55,3 +55,18 @@ def update_description(post_id, description):
     finally:
         cur.close()
         conn.close()
+
+
+def get_post_creator(post_id):
+    conn = get_db()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("SELECT u.user_id, u.first_name, u.last_name FROM Post p JOIN User u ON p.user_id=u.user_id WHERE p.post_id=?", (post_id))
+        post = cur.fetchone()
+        return post
+    except Exception: 
+        raise
+    finally:
+        cur.close()
+        conn.close()

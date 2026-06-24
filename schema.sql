@@ -17,11 +17,12 @@ CREATE TABLE IF NOT EXISTS Post (
 );
 
 CREATE TABLE IF NOT EXISTS Vote (
-  vote_id INTEGER PRIMARY KEY AUTOINCREMENT, 
   post_id INTEGER REFERENCES Post(post_id),
   user_id INTEGER REFERENCES User(user_id),
   vote_date DATE,
-  voted_user_id INTEGER REFERENCES User(user_id)
+  voted_user_id INTEGER REFERENCES User(user_id),
+
+  PRIMARY KEY (user_id, post_id, voted_user_id)
 );
 
 CREATE TABLE IF NOT EXISTS Commentary(

@@ -1,11 +1,14 @@
 from ..database import get_db
 
-def get_users():
+def get_users(activated):
     conn = get_db()
     cur = conn.cursor()
 
     try:
-        cur.execute("SELECT user_id, last_name, first_name, activated FROM User")
+        sql = "SELECT user_id, last_name, first_name, activated FROM User"
+        if(activated):
+            sql += " WHERE activated=1"
+        cur.execute(sql)
         users = cur.fetchall()
         return users
     except Exception: 

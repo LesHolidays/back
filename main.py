@@ -3,7 +3,7 @@ from datetime import timedelta
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from app.database import init_db
-from app.services import posts_service, files_service, users_service, commentary_service
+from app.services import posts_service, files_service, users_service, commentary_service, vote_service
 
 from flask_jwt_extended import get_jwt_identity, jwt_required, JWTManager
 
@@ -33,7 +33,8 @@ def login():
 
 @app.route("/users")
 def get_users():
-    users = users_service.get_all_users()
+    activated = request.args.get("activated") if request.args.get("activated") else False
+    users = users_service.get_all_users(activated)
     return jsonify(users)
 
 @app.route("/users/<int:users_id>")
@@ -53,8 +54,13 @@ def commentary(commentaire):
     return jsonify({'message': f"Commentaire: {commentaire}"})
 
 @app.route("/vote", methods=["POST"])
+@jwt_required()
 def vote():
-    return jsonify({'Vote créé'})
+    user_id = get_jwt_identity()
+    voted_user_id = request.form.get("votedUserId")
+    post_id = request.form.get("postId")
+    vote_response = vote_service.submit_vote(user_id, voted_user_id, post_id)
+    return jsonify(vote_response)
 
 @app.route("/posts", methods=["GET", "POST"])
 @jwt_required()

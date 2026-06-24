@@ -1,5 +1,5 @@
 import base64
-from ..models import posts_model
+from ..models import posts_model, points_model
 from PIL import Image
 import io
 import json
@@ -16,6 +16,8 @@ def create_post(user_id, image, description):
     blob = memoire_tampon.getvalue()
     posts_model.create_post(user_id, blob, description)
     send_notif()
+    points_model.add_points(3, user_id)
+
 
 def get_posts():
     rows = posts_model.get_all_posts()

@@ -26,5 +26,5 @@ def login_user(user_id, input_password):
     else:
         raise Exception("Mauvais mot de passe")
 
-def get_all_users():
-    return users_model.get_users()
+def get_all_users(activated = False):
+    return users_model.get_users(activated)
