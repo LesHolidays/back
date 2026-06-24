@@ -36,9 +36,9 @@ def get_users():
     users = users_service.get_all_users()
     return jsonify(users)
 
-@app.route("/utilisateur/<int:utilisateur_id>")
-def get_user_by_id(utilisateur_id):
-    return jsonify({f"Utilisateur avec l'ID {utilisateur_id}"})
+@app.route("/users/<int:users_id>")
+def get_user_by_id(users_id):
+    return jsonify({f"Utilisateur avec l'ID {users_id}"})
 
 @app.route("/ranking")
 def get_ranking():
@@ -76,3 +76,18 @@ def posts():
     else:
         liste_posts = posts_service.get_posts()
         return jsonify(liste_posts), 200
+    
+@app.route("/posts/<int:post_id>", methods=["DELETE"])
+def delete_post(post_id):
+    posts_service.delete_post(post_id)
+    return jsonify({"success": True}), 200
+
+@app.route("/vote/<int:vote_id>", methods=["DELETE"])
+def delete_vote(vote_id):
+    vote_service.delete_vote(vote_id)
+    return jsonify({"success": True}), 200
+
+@app.route("/commentary/<int:commentary_id>", methods=["DELETE"])
+def delete_commentary(commentary_id):
+    commentary_service.delete_commentary(commentary_id)
+    return jsonify({"success": True}), 200

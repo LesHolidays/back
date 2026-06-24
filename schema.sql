@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS Vote (
   voted_user_id INTEGER REFERENCES User(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS Commentaire(
+CREATE TABLE IF NOT EXISTS Commentary(
   commentary_id INTEGER PRIMARY KEY AUTOINCREMENT, 
   user_id INTEGER REFERENCES User(user_id),
   post_id INTEGER REFERENCES Post(post_id),

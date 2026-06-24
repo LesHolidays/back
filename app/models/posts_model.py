@@ -29,3 +29,16 @@ def get_all_posts():
     finally:
         cur.close()
         conn.close()
+
+def delete_post(post_id):
+    conn = get_db()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("DELETE FROM Post WHERE post_id = ?", (post_id,))
+        conn.commit()
+    except Exception:
+        raise
+    finally:
+        cur.close()
+        conn.close()
