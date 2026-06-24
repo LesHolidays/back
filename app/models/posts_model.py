@@ -42,3 +42,16 @@ def delete_post(post_id):
     finally:
         cur.close()
         conn.close()
+
+def update_description(post_id, description):
+    conn = get_db()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("UPDATE Post SET description = ? WHERE post_id = ?", (description, post_id))
+        conn.commit()
+    except Exception:
+        raise
+    finally:
+        cur.close()
+        conn.close()

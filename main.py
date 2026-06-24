@@ -3,7 +3,7 @@ from datetime import timedelta
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from app.database import init_db
-from app.services import posts_service, files_service, users_service
+from app.services import posts_service, files_service, users_service, commentary_service
 
 from flask_jwt_extended import get_jwt_identity, jwt_required, JWTManager
 
@@ -96,4 +96,10 @@ def delete_commentary(commentary_id):
 def update_commentary(commentary_id):
     message = request.json.get("message")
     commentary_service.update_commentary(commentary_id, message)
+    return jsonify({"success": True}), 200
+
+@app.route("/post/<int:post_id>", methods=["PUT"])
+def update_description(post_id):
+    description = request.json.get("description")
+    posts_service.update_description(post_id, description)
     return jsonify({"success": True}), 200
