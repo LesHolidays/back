@@ -11,7 +11,8 @@ def submit_vote(user_id, voted_user_id, post_id):
         points_model.add_points(nb_votes_remaining, user_id)
         return {
             "guessed": True,
-            "remaining": nb_votes_remaining
+            "remaining": nb_votes_remaining,
+            "creator": post_creator["first_name"] + " " + post_creator["last_name"]
         }
     if(nb_votes_remaining > 1):
         return {
