@@ -62,7 +62,7 @@ def get_post_creator(post_id):
     cur = conn.cursor()
 
     try:
-        cur.execute("SELECT u.user_id, u.first_name, u.last_name FROM Post p JOIN User u ON p.user_id=u.user_id WHERE p.post_id=?", (post_id))
+        cur.execute("SELECT u.user_id, u.first_name, u.last_name FROM Post p JOIN User u ON p.user_id=u.user_id WHERE p.post_id=?", (post_id,))
         post = cur.fetchone()
         return post
     except Exception: 

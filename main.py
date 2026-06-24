@@ -45,10 +45,6 @@ def get_user_by_id(users_id):
 def get_points(points):
     return jsonify({f"Points de l'utilisateur: {points}"})
 
-@app.route("/commentary")
-def commentary(commentaire):
-    return jsonify({'message': f"Commentaire: {commentaire}"})
-
 @app.route("/vote", methods=["POST"])
 @jwt_required()
 def vote():
@@ -84,22 +80,6 @@ def delete_post(post_id):
     posts_service.delete_post(post_id)
     return jsonify({"success": True}), 200
 
-@app.route("/vote/<int:vote_id>", methods=["DELETE"])
-def delete_vote(vote_id):
-    vote_service.delete_vote(vote_id)
-    return jsonify({"success": True}), 200
-
-@app.route("/commentary/<int:commentary_id>", methods=["DELETE"])
-def delete_commentary(commentary_id):
-    commentary_service.delete_commentary(commentary_id)
-    return jsonify({"success": True}), 200
-
-@app.route("/commentary/<int:commentary_id>", methods=["PUT"])
-def update_commentary(commentary_id):
-    message = request.json.get("message")
-    commentary_service.update_commentary(commentary_id, message)
-    return jsonify({"success": True}), 200
-
 @app.route("/post/<int:post_id>", methods=["PUT"])
 def update_description(post_id):
     description = request.json.get("description")
@@ -107,6 +87,25 @@ def update_description(post_id):
     return jsonify({"success": True}), 200
 
 @app.route("/ranking")
-def get_ranking():
+def ranking():
     ranking = points_service.get_ranking()
     return jsonify(ranking)
+
+@app.route("/commentaries", methods=["POST", "GET", "DELETE"])
+@jwt_required()
+def commentaries():
+    if(request.method == "GET"):
+        post_id = request.args.get("postId")
+        commentaries = commentary_service.get_commentaries(post_id)
+        return jsonify(commentaries)
+    elif(request.method == "POST"):
+        post_id = request.form.get("postId")
+        message = request.form.get("message")
+        user_id = get_jwt_identity()
+        commentary_service.create_commentary(message, post_id, user_id)
+        return jsonify({"success": True}), 201
+    else:
+        commentary_id = request.args.get("commentaryId")
+        user_id = get_jwt_identity()
+        commentary_service.delete_commentary(commentary_id, user_id)
+        return jsonify({"success": True}), 200

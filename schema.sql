@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS Commentary(
   user_id INTEGER REFERENCES User(user_id),
   post_id INTEGER REFERENCES Post(post_id),
   creation_date DATE,
-  message VARCHAR(255)
+  commentary VARCHAR(255)
 
 );
 
