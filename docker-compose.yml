@@ -1,0 +1,15 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "5001:5000"
+    volumes:
+      - db-data:/app/data
+    env_file:
+      - .env
+    environment:
+      - FLASK_APP=main.py
+      - DATABASE_PATH=/app/data/database.db
+
+volumes:
+  db-data:
