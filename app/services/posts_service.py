@@ -19,6 +19,19 @@ def create_post(user_id, image, description):
     points_model.add_points(3, user_id)
 
 
+def send_notif():
+    try:
+        load_dotenv()
+        url = os.getenv("WEBHOOK_URL")
+        data = json.dumps({"content": "Nouvelle photo sur [Holidays](https://holidays.super-sympa.fr) !"}).encode()
+        headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "HolidaysBot/1.0"
+        }
+        urllib.request.urlopen(urllib.request.Request(url, data, headers))
+    except:
+        pass
+
 def get_posts():
     rows = posts_model.get_all_posts()
     posts = []
@@ -43,16 +56,3 @@ def get_posts():
         posts.append(post)
         
     return posts
-
-def send_notif():
-    try:
-        load_dotenv()
-        url = os.getenv("WEBHOOK_URL")
-        data = json.dumps({"content": "Nouvelle photo sur [Holidays](https://holidays.super-sympa.fr) !"}).encode()
-        headers = {
-            "Content-Type": "application/json",
-            "User-Agent": "HolidaysBot/1.0"
-        }
-        urllib.request.urlopen(urllib.request.Request(url, data, headers))
-    except:
-        pass
