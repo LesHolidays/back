@@ -73,7 +73,8 @@ def posts():
 
         return jsonify({"success": True}), 201
     elif(request.method == "GET"):
-        liste_posts = posts_service.get_principal_feed()
+        user_id = int(get_jwt_identity())
+        liste_posts = posts_service.get_principal_feed(user_id)
         return jsonify(liste_posts), 200
     else:
         user_id = get_jwt_identity()
@@ -84,7 +85,8 @@ def posts():
 @app.route("/archives", methods=["GET"])
 @jwt_required()
 def get_archives_feed():
-    archives = posts_service.get_archives_feed()
+    user_id = int(get_jwt_identity())
+    archives = posts_service.get_archives_feed(user_id)
     return jsonify(archives), 200
 
 # user feed

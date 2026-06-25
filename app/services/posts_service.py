@@ -55,12 +55,12 @@ def format_posts(rows):
         posts.append(post)
     return posts
 
-def get_principal_feed():
-    rows = posts_model.get_principal_feed()
+def get_principal_feed(user_id):
+    rows = posts_model.get_principal_feed(user_id)
     return format_posts(rows)
 
-def get_archives_feed():
-    rows = posts_model.get_archives_feed()
+def get_archives_feed(user_id):
+    rows = posts_model.get_archives_feed(user_id)
     return format_posts(rows)   
 
 def get_user_feed(user_id):

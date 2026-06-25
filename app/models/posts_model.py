@@ -35,16 +35,25 @@ def get_all_posts():
         cur.close()
         conn.close()
 
-
-def get_principal_feed():
+def get_principal_feed(user_id):
     conn = get_db()
     cur = conn.cursor()
 
     try:
         stopdate = (datetime.now() - timedelta(hours=24)).strftime('%Y-%m-%d %H:%M:%S')
         cur.execute(
-            "SELECT post_id, image, description, creation_date FROM Post WHERE creation_date >= ? ORDER BY creation_date DESC",
-            (stopdate,)
+            """
+            SELECT DISTINCT p.post_id, p.image, p.description, p.creation_date, u.user_id 
+            FROM Post p
+            JOIN User u ON p.user_id = u.user_id
+            JOIN Vote v ON p.post_id = v.post_id
+            WHERE p.creation_date >= ?
+            AND p.user_id != ?
+            AND (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=? AND voted_user_id=p.user_id) <= 0
+            AND (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=?) <= 4
+            ORDER BY p.creation_date DESC
+            """,
+            (stopdate, user_id, user_id, user_id)
         )
         feed = cur.fetchall()
         return feed
@@ -54,21 +63,24 @@ def get_principal_feed():
         cur.close()
         conn.close()
 
-def get_archives_feed():
+def get_archives_feed(user_id):
     conn = get_db()
     cur = conn.cursor()
 
     try:
-        stopdate = (datetime.now() - timedelta(hours=24)).strftime('%Y-%m-%d %H:%M:%S')
+        stopdate = (datetime.now() - timedelta(hours=0.01)).strftime('%Y-%m-%d %H:%M:%S')
         cur.execute(
             """
-            SELECT p.post_id, u.first_name, u.last_name,p.image, p.description, p.creation_date
+            SELECT DISTINCT p.post_id, u.first_name, u.last_name,p.image, p.description, p.creation_date
             FROM Post p
             JOIN User u ON p.user_id = u.user_id
-            WHERE p.creation_date < ? 
+            JOIN Vote v ON p.post_id = v.post_id
+            WHERE p.creation_date < ?
+            OR (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=? AND voted_user_id=p.user_id) > 0
+            OR (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=?) > 4
             ORDER BY p.creation_date DESC
             """,
-            (stopdate,)
+            (stopdate,user_id, user_id)
         )
         archives = cur.fetchall()
         return archives
@@ -85,7 +97,7 @@ def get_user_feed(user_id):
     try:
         cur.execute(
             """
-            SELECT p.post_id, u.first_name, u.last_name,p.image, p.description, p.creation_date
+            SELECT DISTINCT p.post_id, u.first_name, u.last_name,p.image, p.description, p.creation_date
             FROM Post p
             JOIN User u ON p.user_id = u.user_id
             WHERE p.user_id = ?
