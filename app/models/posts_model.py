@@ -101,12 +101,12 @@ def get_user_feed(user_id):
         cur.close()
         conn.close()
 
-def delete_post(post_id):
+def delete_post(user_id, post_id):
     conn = get_db()
     cur = conn.cursor()
 
     try:
-        cur.execute("DELETE FROM Post WHERE post_id = ?", (post_id,))
+        cur.execute("DELETE FROM Post WHERE post_id=? AND user_id=?", (post_id,user_id))
         conn.commit()
     except Exception:
         raise

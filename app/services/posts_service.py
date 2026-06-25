@@ -18,6 +18,9 @@ def create_post(user_id, image, description):
     send_notif()
     points_model.add_points(3, user_id)
 
+def delete_post(user_id, post_id):
+    posts_model.delete_post(user_id, post_id)
+    points_model.add_points(-3, user_id)
 
 def send_notif():
     try:
