@@ -135,6 +135,10 @@ def init_db():
         cur.execute("INSERT INTO User (user_id, last_name, first_name, year) VALUES (?, ?, ?, ?)",
                     (31, 'Zhyla', 'Alina', 'IMAC1')
                     )
+
+        cur.execute("INSERT INTO User (user_id, last_name, first_name, year) VALUES (?, ?, ?, ?)",
+                    (32, 'Cherrier', 'Sylvain', 'PROF')
+                    )
         conn.commit()
     except:
         pass
