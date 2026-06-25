@@ -1,5 +1,6 @@
 import base64
 from ..models import posts_model, points_model
+from ..errors import NotFoundError, ForbiddenError, BadRequestError, ConflictError
 from PIL import Image
 import io
 import json
@@ -7,7 +8,16 @@ import urllib.request
 from dotenv import load_dotenv
 import os
 
+POINTS_CREATE_POST = 3
+POINTS_DELETE_POST = -3
+
 def create_post(user_id, image, description):
+    # Vérifier qu'il n'a pas déjà posté dans les 24 dernières heures
+    # On fait cette vérif AVANT de traiter l'image pour ne pas gaspiller 
+    # du temps de traitement si on va refuser de toute façon
+    if posts_model.has_recent_post(user_id):
+        raise ConflictError("Vous avez déjà publié un post dans les dernières 24 heures")
+
     img = Image.open(image.stream)
     img_format = img.format if img.format else 'PNG'
     img.thumbnail((800, 800))
@@ -16,11 +26,40 @@ def create_post(user_id, image, description):
     blob = memoire_tampon.getvalue()
     posts_model.create_post(user_id, blob, description)
     send_notif()
-    points_model.add_points(3, user_id)
+    points_model.add_points(POINTS_CREATE_POST, user_id)
+    return POINTS_CREATE_POST
 
 def delete_post(user_id, post_id):
-    posts_model.delete_post(user_id, post_id)
-    points_model.add_points(-3, user_id)
+    if not post_id:
+        raise BadRequestError("L'identifiant du post est requis")
+
+    # Étape 1 : le post existe-t-il ?
+    # Si on ne faisait pas cette vérification, on supprimerait "0 lignes" 
+    # silencieusement et l'utilisateur ne saurait pas pourquoi ça n'a pas marché
+    post = posts_model.get_post_by_id(post_id)
+    if not post:
+        raise NotFoundError("Post introuvable")
+
+    # Étape 2 : est-ce que c'est TON post ?
+    # C'est ici qu'on remplace le "AND user_id=?" du SQL.
+    # Avantage : on peut renvoyer 403 (interdit) au lieu de 404 (introuvable)
+    # L'utilisateur sait que le post existe mais qu'il n'a pas le droit de le supprimer
+    if post["user_id"] != int(user_id):
+        raise ForbiddenError("Vous ne pouvez supprimer que vos propres posts")
+
+    posts_model.delete_post(post_id)
+    points_model.add_points(POINTS_DELETE_POST, user_id)
+    return POINTS_DELETE_POST
+
+def update_description(user_id, post_id, description):
+    post = posts_model.get_post_by_id(post_id)
+    if not post:
+        raise NotFoundError("Post introuvable")
+
+    if post["user_id"] != int(user_id):
+        raise ForbiddenError("Vous ne pouvez modifier que vos propres posts")
+
+    posts_model.update_description(post_id, description)
 
 def send_notif():
     try:

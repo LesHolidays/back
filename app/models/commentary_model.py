@@ -14,12 +14,26 @@ def create_commentary(message, post_id, user_id):
         cur.close()
         conn.close()
 
-def delete_commentary(commentary_id, user_id):
+def get_commentary_by_id(commentary_id):
     conn = get_db()
     cur = conn.cursor()
 
     try:
-        cur.execute("DELETE FROM commentary WHERE commentary_id=? AND user_id=?", (commentary_id, user_id))
+        cur.execute("SELECT * FROM Commentary WHERE commentary_id=?", (commentary_id,))
+        commentary = cur.fetchone()
+        return commentary
+    except Exception:
+        raise
+    finally:
+        cur.close()
+        conn.close()
+
+def delete_commentary(commentary_id):
+    conn = get_db()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("DELETE FROM Commentary WHERE commentary_id=?", (commentary_id,))
         conn.commit()
     except Exception:
         raise

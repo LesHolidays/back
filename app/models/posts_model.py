@@ -1,5 +1,3 @@
-import base64
-
 from ..database import get_db
 from datetime import datetime
 from datetime import timedelta
@@ -15,6 +13,25 @@ def create_post(user_id, blob, description):
             (user_id, Binary(blob), description, creation_date)
         )
         conn.commit()
+    except Exception:
+        raise
+    finally:
+        cur.close()
+        conn.close()
+
+# Vérifie si l'utilisateur a déjà un post dans les dernières 24h
+# On compte les posts récents plutôt que de chercher le dernier,
+# parce que count(*) renvoie toujours un résultat (0 ou plus), 
+# c'est plus simple à gérer qu'un fetchone qui peut renvoyer None
+def has_recent_post(user_id):
+    conn = get_db()
+    cur = conn.cursor()
+
+    try:
+        stopdate = (datetime.now() - timedelta(hours=24)).strftime('%Y-%m-%d %H:%M:%S')
+        cur.execute("SELECT count(*) count FROM Post WHERE user_id=? AND creation_date >= ?", (user_id, stopdate))
+        result = cur.fetchone()
+        return result["count"] > 0
     except Exception:
         raise
     finally:
@@ -113,12 +130,26 @@ def get_user_feed(user_id):
         cur.close()
         conn.close()
 
-def delete_post(user_id, post_id):
+def get_post_by_id(post_id):
     conn = get_db()
     cur = conn.cursor()
 
     try:
-        cur.execute("DELETE FROM Post WHERE post_id=? AND user_id=?", (post_id,user_id))
+        cur.execute("SELECT * FROM Post WHERE post_id=?", (post_id,))
+        post = cur.fetchone()
+        return post
+    except Exception:
+        raise
+    finally:
+        cur.close()
+        conn.close()
+
+def delete_post(post_id):
+    conn = get_db()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("DELETE FROM Post WHERE post_id=?", (post_id,))
         conn.commit()
     except Exception:
         raise
