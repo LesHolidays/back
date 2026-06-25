@@ -31,20 +31,4 @@ CREATE TABLE IF NOT EXISTS Commentary(
   post_id INTEGER REFERENCES Post(post_id),
   creation_date DATE,
   commentary VARCHAR(255)
-
 );
-
--- SELECT nom, prenom FROM utilisateur ORDER BY nom ASC
-
--- INSERT INTO utilisateur (compte) VALUES (?)
-
--- SELECT post_id FROM post
--- INSERT INTO post (vote) VALUES (?)
--- INSERT INTO post(commentaire) VALUES (?)
--- SELECT points FROM utilisateur
--- DELETE FROM post
--- UPDATE post SET description=?
-
--- INSERT INTO post (nouveau) VALUES (?)
-
--- SELECT points FROM utilisateur ORDER BY points DESC
