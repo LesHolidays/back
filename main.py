@@ -54,6 +54,7 @@ def vote():
     vote_response = vote_service.submit_vote(user_id, voted_user_id, post_id)
     return jsonify(vote_response)
 
+# feed moins de 24h
 @app.route("/posts", methods=["GET", "POST"])
 @jwt_required()
 def posts():
@@ -72,8 +73,23 @@ def posts():
 
         return jsonify({"success": True}), 201
     else:
-        liste_posts = posts_service.get_posts()
+        liste_posts = posts_service.get_principal_feed()
         return jsonify(liste_posts), 200
+    
+# archives
+@app.route("/archives", methods=["GET"])
+@jwt_required()
+def get_archives_feed():
+    archives = posts_service.get_archives_feed()
+    return jsonify(archives), 200
+
+# user feed
+@app.route("/user_feed", methods=["GET"])
+@jwt_required()
+def get_user_feed():
+    user_id = get_jwt_identity()
+    user_feed = posts_service.get_user_feed(user_id)
+    return jsonify(user_feed), 200
     
 @app.route("/posts/<int:post_id>", methods=["DELETE"])
 def delete_post(post_id):

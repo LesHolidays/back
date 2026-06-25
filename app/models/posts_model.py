@@ -9,7 +9,11 @@ def create_post(user_id, blob, description):
     conn = get_db()
     cur = conn.cursor()
     try:
-        cur.execute('INSERT INTO Post (user_id, image, description, creation_date) VALUES (?, ?, ?, ?)', (user_id, Binary(blob), description, datetime.now()))
+        creation_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        cur.execute(
+            'INSERT INTO Post (user_id, image, description, creation_date) VALUES (?, ?, ?, ?)',
+            (user_id, Binary(blob), description, creation_date)
+        )
         conn.commit()
     except Exception:
         raise
@@ -37,7 +41,7 @@ def get_principal_feed():
     cur = conn.cursor()
 
     try:
-        stopdate = (datetime.now() - timedelta(hours=24))
+        stopdate = (datetime.now() - timedelta(hours=24)).strftime('%Y-%m-%d %H:%M:%S')
         cur.execute(
             "SELECT post_id, image, description, creation_date FROM Post WHERE creation_date >= ? ORDER BY creation_date DESC",
             (stopdate,)
@@ -55,7 +59,7 @@ def get_archives_feed():
     cur = conn.cursor()
 
     try:
-        stopdate = (datetime.now() - timedelta(hours=24))
+        stopdate = (datetime.now() - timedelta(hours=24)).strftime('%Y-%m-%d %H:%M:%S')
         cur.execute(
             """
             SELECT p.post_id, u.first_name, u.last_name,p.image, p.description, p.creation_date
@@ -87,7 +91,7 @@ def get_user_feed(user_id):
             WHERE p.user_id = ?
             ORDER BY p.creation_date DESC
             """,
-            (user_id, datetime.now(),)
+            (user_id,)
         )
         user_feed = cur.fetchall()
         return user_feed

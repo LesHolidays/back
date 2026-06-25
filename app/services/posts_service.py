@@ -32,12 +32,10 @@ def send_notif():
     except:
         pass
 
-def get_posts():
-    rows = posts_model.get_all_posts()
+def format_posts(rows):
     posts = []
     for row in rows:
         post = dict(row)
-        
         blob_data = post["image"]
         
         if isinstance(blob_data, str):
@@ -48,11 +46,20 @@ def get_posts():
                 blob_data = blob_data.encode('utf-8')
         
         base64_data = base64.b64encode(blob_data).decode('utf-8')
-        
         mime_type = "image/png" if b"PNG" in blob_data[:10] else "image/jpeg"
-        
         post["image"] = f"data:{mime_type};base64,{base64_data}"
-            
+
         posts.append(post)
-        
     return posts
+
+def get_principal_feed():
+    rows = posts_model.get_principal_feed()
+    return format_posts(rows)
+
+def get_archives_feed():
+    rows = posts_model.get_archives_feed()
+    return format_posts(rows)   
+
+def get_user_feed(user_id):
+    rows = posts_model.get_user_feed(user_id)
+    return format_posts(rows)
