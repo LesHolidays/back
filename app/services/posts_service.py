@@ -1,5 +1,5 @@
 import base64
-from ..models import posts_model, points_model
+from ..models import posts_model, points_model, vote_model
 from ..errors import NotFoundError, ForbiddenError, BadRequestError, ConflictError
 from PIL import Image
 import io
@@ -7,6 +7,7 @@ import json
 import urllib.request
 from dotenv import load_dotenv
 import os
+from datetime import datetime, timedelta
 
 POINTS_CREATE_POST = 3
 POINTS_DELETE_POST = -3
@@ -46,6 +47,13 @@ def delete_post(user_id, post_id):
     # L'utilisateur sait que le post existe mais qu'il n'a pas le droit de le supprimer
     if post["user_id"] != int(user_id):
         raise ForbiddenError("Vous ne pouvez supprimer que vos propres posts")
+
+    post_date = datetime.strptime(post["creation_date"], '%Y-%m-%d %H:%M:%S')
+    
+    if datetime.now() - post_date > timedelta(hours=24):
+        successful_voters = vote_model.get_successful_voters(post_id, post["user_id"])
+        for voter in successful_voters:
+            points_model.add_points(-voter["points_to_remove"], voter["user_id"])
 
     posts_model.delete_post(post_id)
     points_model.add_points(POINTS_DELETE_POST, user_id)

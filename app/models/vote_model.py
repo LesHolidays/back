@@ -40,3 +40,23 @@ def get_nb_vote_on_post(post_id, user_id):
     finally:
         cur.close()
         conn.close()
+
+def get_successful_voters(post_id, post_creator_id):
+    conn = get_db()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("""
+            SELECT user_id, 6 - COUNT(*) as points_to_remove
+            FROM Vote
+            WHERE post_id = ?
+            GROUP BY user_id
+            HAVING SUM(CASE WHEN voted_user_id = ? THEN 1 ELSE 0 END) > 0
+        """, (post_id, post_creator_id))
+        result = cur.fetchall()
+        return result
+    except Exception:
+        raise
+    finally:
+        cur.close()
+        conn.close()
