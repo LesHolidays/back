@@ -173,3 +173,10 @@ def commentaries():
         user_id = get_jwt_identity()
         commentary_service.delete_commentary(commentary_id, user_id)
         return jsonify({"success": True}), 200
+
+@app.route("/votes")
+def votes():
+    post_id = request.args.get("postId")
+    post_creator_id = request.args.get("postCreatorId")
+    users_who_guessed = vote_service.get_who_guessed(post_id, post_creator_id)
+    return jsonify(users_who_guessed)

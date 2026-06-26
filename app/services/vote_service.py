@@ -46,3 +46,6 @@ def submit_vote(user_id, voted_user_id, post_id):
             "creator": post_creator["first_name"] + " " + post_creator["last_name"],
             "points_added": 0
         }
+
+def get_who_guessed(post_id, post_creator_id):
+    return vote_model.get_who_guessed(post_id, post_creator_id)

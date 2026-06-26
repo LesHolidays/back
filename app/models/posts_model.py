@@ -60,8 +60,9 @@ def get_principal_feed(user_id, limit=10, offset=0):
         stopdate = (datetime.now() - timedelta(hours=24)).strftime('%Y-%m-%d %H:%M:%S')
         cur.execute(
             """
-            SELECT DISTINCT p.post_id, p.image, p.description, p.creation_date, u.user_id,
-                (SELECT COUNT(*) FROM Commentary WHERE post_id=p.post_id) as commentary_count
+            SELECT DISTINCT p.post_id, p.image, p.description, p.creation_date,
+                (SELECT COUNT(*) FROM Commentary WHERE post_id=p.post_id) as commentary_count,
+                (SELECT COUNT(*) FROM Vote WHERE post_id=p.post_id AND voted_user_id=p.user_id) as guess_count
             FROM Post p
             JOIN User u ON p.user_id = u.user_id
             LEFT JOIN Vote v ON p.post_id = v.post_id
@@ -117,8 +118,9 @@ def get_archives_feed(user_id, limit=10, offset=0):
         stopdate = (datetime.now() - timedelta(hours=24)).strftime('%Y-%m-%d %H:%M:%S')
         cur.execute(
             """
-            SELECT DISTINCT p.post_id, u.first_name, u.last_name, p.image, p.description, p.creation_date,
-                (SELECT COUNT(*) FROM Commentary WHERE post_id=p.post_id) as commentary_count
+            SELECT DISTINCT p.user_id, p.post_id, u.first_name, u.last_name, p.image, p.description, p.creation_date,
+                (SELECT COUNT(*) FROM Commentary WHERE post_id=p.post_id) as commentary_count,
+                (SELECT COUNT(*) FROM Vote WHERE post_id=p.post_id AND voted_user_id=p.user_id) as guess_count
             FROM Post p
             JOIN User u ON p.user_id = u.user_id
             LEFT JOIN Vote v ON p.post_id = v.post_id
@@ -171,8 +173,9 @@ def get_user_feed(user_id, limit=10, offset=0):
     try:
         cur.execute(
             """
-            SELECT DISTINCT p.post_id, u.first_name, u.last_name, p.image, p.description, p.creation_date,
-                (SELECT COUNT(*) FROM Commentary WHERE post_id=p.post_id) as commentary_count
+            SELECT DISTINCT p.user_id, p.post_id, u.first_name, u.last_name, p.image, p.description, p.creation_date,
+                (SELECT COUNT(*) FROM Commentary WHERE post_id=p.post_id) as commentary_count,
+                (SELECT COUNT(*) FROM Vote WHERE post_id=p.post_id AND voted_user_id=p.user_id) as guess_count
             FROM Post p
             JOIN User u ON p.user_id = u.user_id
             WHERE p.user_id = ?
