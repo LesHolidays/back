@@ -52,7 +52,7 @@ def get_all_posts():
         cur.close()
         conn.close()
 
-def get_principal_feed(user_id):
+def get_principal_feed(user_id, limit=10, offset=0):
     conn = get_db()
     cur = conn.cursor()
 
@@ -60,7 +60,8 @@ def get_principal_feed(user_id):
         stopdate = (datetime.now() - timedelta(hours=24)).strftime('%Y-%m-%d %H:%M:%S')
         cur.execute(
             """
-            SELECT DISTINCT p.post_id, p.image, p.description, p.creation_date, u.user_id 
+            SELECT DISTINCT p.post_id, p.image, p.description, p.creation_date, u.user_id,
+                (SELECT COUNT(*) FROM Commentary WHERE post_id=p.post_id) as commentary_count
             FROM Post p
             JOIN User u ON p.user_id = u.user_id
             LEFT JOIN Vote v ON p.post_id = v.post_id
@@ -69,8 +70,9 @@ def get_principal_feed(user_id):
             AND (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=? AND voted_user_id=p.user_id) <= 0
             AND (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=?) <= 4
             ORDER BY p.creation_date DESC
+            LIMIT ? OFFSET ?
             """,
-            (stopdate, user_id, user_id, user_id)
+            (stopdate, user_id, user_id, user_id, limit, offset)
         )
         feed = cur.fetchall()
         return feed
@@ -80,7 +82,7 @@ def get_principal_feed(user_id):
         cur.close()
         conn.close()
 
-def get_archives_feed(user_id):
+def count_principal_feed(user_id):
     conn = get_db()
     cur = conn.cursor()
 
@@ -88,7 +90,35 @@ def get_archives_feed(user_id):
         stopdate = (datetime.now() - timedelta(hours=24)).strftime('%Y-%m-%d %H:%M:%S')
         cur.execute(
             """
-            SELECT DISTINCT p.post_id, u.first_name, u.last_name,p.image, p.description, p.creation_date
+            SELECT COUNT(DISTINCT p.post_id) as total
+            FROM Post p
+            JOIN User u ON p.user_id = u.user_id
+            LEFT JOIN Vote v ON p.post_id = v.post_id
+            WHERE p.creation_date >= ?
+            AND p.user_id != ?
+            AND (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=? AND voted_user_id=p.user_id) <= 0
+            AND (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=?) <= 4
+            """,
+            (stopdate, user_id, user_id, user_id)
+        )
+        result = cur.fetchone()
+        return result["total"]
+    except Exception:
+        raise
+    finally:
+        cur.close()
+        conn.close()
+
+def get_archives_feed(user_id, limit=10, offset=0):
+    conn = get_db()
+    cur = conn.cursor()
+
+    try:
+        stopdate = (datetime.now() - timedelta(hours=24)).strftime('%Y-%m-%d %H:%M:%S')
+        cur.execute(
+            """
+            SELECT DISTINCT p.post_id, u.first_name, u.last_name, p.image, p.description, p.creation_date,
+                (SELECT COUNT(*) FROM Commentary WHERE post_id=p.post_id) as commentary_count
             FROM Post p
             JOIN User u ON p.user_id = u.user_id
             LEFT JOIN Vote v ON p.post_id = v.post_id
@@ -96,8 +126,9 @@ def get_archives_feed(user_id):
             OR (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=? AND voted_user_id=p.user_id) > 0
             OR (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=?) > 4
             ORDER BY p.creation_date DESC
+            LIMIT ? OFFSET ?
             """,
-            (stopdate,user_id, user_id)
+            (stopdate, user_id, user_id, limit, offset)
         )
         archives = cur.fetchall()
         return archives
@@ -107,23 +138,72 @@ def get_archives_feed(user_id):
         cur.close()
         conn.close()
 
-def get_user_feed(user_id):
+def count_archives_feed(user_id):
+    conn = get_db()
+    cur = conn.cursor()
+
+    try:
+        stopdate = (datetime.now() - timedelta(hours=24)).strftime('%Y-%m-%d %H:%M:%S')
+        cur.execute(
+            """
+            SELECT COUNT(DISTINCT p.post_id) as total
+            FROM Post p
+            JOIN User u ON p.user_id = u.user_id
+            LEFT JOIN Vote v ON p.post_id = v.post_id
+            WHERE p.creation_date < ?
+            OR (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=? AND voted_user_id=p.user_id) > 0
+            OR (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=?) > 4
+            """,
+            (stopdate, user_id, user_id)
+        )
+        result = cur.fetchone()
+        return result["total"]
+    except Exception:
+        raise
+    finally:
+        cur.close()
+        conn.close()
+
+def get_user_feed(user_id, limit=10, offset=0):
     conn = get_db()
     cur = conn.cursor()
 
     try:
         cur.execute(
             """
-            SELECT DISTINCT p.post_id, u.first_name, u.last_name,p.image, p.description, p.creation_date
+            SELECT DISTINCT p.post_id, u.first_name, u.last_name, p.image, p.description, p.creation_date,
+                (SELECT COUNT(*) FROM Commentary WHERE post_id=p.post_id) as commentary_count
             FROM Post p
             JOIN User u ON p.user_id = u.user_id
             WHERE p.user_id = ?
             ORDER BY p.creation_date DESC
+            LIMIT ? OFFSET ?
             """,
-            (user_id,)
+            (user_id, limit, offset)
         )
         user_feed = cur.fetchall()
         return user_feed
+    except Exception:
+        raise
+    finally:
+        cur.close()
+        conn.close()
+
+def count_user_feed(user_id):
+    conn = get_db()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(
+            """
+            SELECT COUNT(DISTINCT p.post_id) as total
+            FROM Post p
+            WHERE p.user_id = ?
+            """,
+            (user_id,)
+        )
+        result = cur.fetchone()
+        return result["total"]
     except Exception:
         raise
     finally:

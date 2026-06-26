@@ -102,14 +102,23 @@ def format_posts(rows):
         posts.append(post)
     return posts
 
-def get_principal_feed(user_id):
-    rows = posts_model.get_principal_feed(user_id)
-    return format_posts(rows)
+def get_principal_feed(user_id, page=1, limit=10):
+    offset = (page - 1) * limit
+    rows = posts_model.get_principal_feed(user_id, limit=limit, offset=offset)
+    total = posts_model.count_principal_feed(user_id)
+    posts = format_posts(rows)
+    return {"posts": posts, "has_more": (offset + len(posts)) < total}
 
-def get_archives_feed(user_id):
-    rows = posts_model.get_archives_feed(user_id)
-    return format_posts(rows)   
+def get_archives_feed(user_id, page=1, limit=10):
+    offset = (page - 1) * limit
+    rows = posts_model.get_archives_feed(user_id, limit=limit, offset=offset)
+    total = posts_model.count_archives_feed(user_id)
+    posts = format_posts(rows)
+    return {"posts": posts, "has_more": (offset + len(posts)) < total}
 
-def get_user_feed(user_id):
-    rows = posts_model.get_user_feed(user_id)
-    return format_posts(rows)
+def get_user_feed(user_id, page=1, limit=10):
+    offset = (page - 1) * limit
+    rows = posts_model.get_user_feed(user_id, limit=limit, offset=offset)
+    total = posts_model.count_user_feed(user_id)
+    posts = format_posts(rows)
+    return {"posts": posts, "has_more": (offset + len(posts)) < total}
