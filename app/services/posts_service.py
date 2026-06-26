@@ -48,12 +48,9 @@ def delete_post(user_id, post_id):
     if post["user_id"] != int(user_id):
         raise ForbiddenError("Vous ne pouvez supprimer que vos propres posts")
 
-    post_date = datetime.strptime(post["creation_date"], '%Y-%m-%d %H:%M:%S')
-    
-    if datetime.now() - post_date > timedelta(hours=24):
-        successful_voters = vote_model.get_successful_voters(post_id, post["user_id"])
-        for voter in successful_voters:
-            points_model.add_points(-voter["points_to_remove"], voter["user_id"])
+    successful_voters = vote_model.get_successful_voters(post_id, post["user_id"])
+    for voter in successful_voters:
+        points_model.add_points(-voter["points_to_remove"], voter["user_id"])
 
     posts_model.delete_post(post_id)
     points_model.add_points(POINTS_DELETE_POST, user_id)
