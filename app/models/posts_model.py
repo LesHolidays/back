@@ -127,10 +127,11 @@ def get_archives_feed(user_id, limit=10, offset=0):
             WHERE p.creation_date < ?
             OR (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=? AND voted_user_id=p.user_id) > 0
             OR (SELECT count(*) FROM Vote WHERE post_id=p.post_id AND user_id=?) > 4
+            OR p.user_id = ?
             ORDER BY p.creation_date DESC
             LIMIT ? OFFSET ?
             """,
-            (stopdate, user_id, user_id, limit, offset)
+            (stopdate, user_id, user_id, user_id, limit, offset)
         )
         archives = cur.fetchall()
         return archives
